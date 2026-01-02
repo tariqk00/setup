@@ -1,34 +1,33 @@
-# Setup & Dotfiles
+# Developer Setup & Infrastructure
 
-This repository contains automation scripts and configuration files to quickly rebuild my developer environment on any OS, with a primary focus on ChromeOS (Crostini).
+This repository centralizes automation scripts and documentation for my development environment and server infrastructure.
 
-## Quick Start (Bootstrap)
+## Structure
 
-To set up a fresh environment, clone this repository and run the bootstrap script:
+- `bootstrap.py`: Main entry point for running setup modules.
+- `dev_env_setup.py`: Local developer environment configuration (e.g., Antigravity/ChromeOS fixes).
+- `server_status.py`: Health check script for the Ubuntu Server (pings, SSH, and web services).
+- `ubuntu_server_setup.md`: Guide and checklist for setting up the "Always-On" Ubuntu Server.
 
+## Usage
+
+### Local Developer Environment
+To set up or fix a local developer environment:
 ```bash
-git clone https://github.com/tariqk00/setup.git ~/github/tariqk00/setup
-cd ~/github/tariqk00/setup
-python3 bootstrap.py
+python3 bootstrap.py dev-env
+```
+*(Handles `gnome-keyring` installation and VS Code/Antigravity encryption settings)*
+
+### Ubuntu Server
+For server setup steps (CasaOS, n8n, etc.), refer to:
+[ubuntu_server_setup.md](file:///home/takhan/github/tariqk00/setup/ubuntu_server_setup.md)
+
+To check the status of your server and its services:
+```bash
+python3 server_status.py
 ```
 
-### What it handles:
-- **Linux/ChromeOS**:
-    - Installs `gnome-keyring` for secure credential storage.
-    - Configures Antigravity/VS Code to use the secure keyring (fixing the "OS keyring" error).
-- **Windows/macOS**:
-    - Detects OS and provides recommendations for native package managers.
+---
 
-## Manual Steps (Post-Setup)
-
-While the script handles system configuration, the following must be done manually:
-
-1.  **Sign in to GitHub**: Click the accounts icon in the IDE and sign in to restore repository sync.
-2.  **Clone Repositories**: Clone your active projects (e.g., `media`).
-3.  **Install Language Tools**:
-    - **HandBrake CLI**: `sudo apt install handbrake-cli`
-    - **Python 2** (if needed for older scripts): `sudo apt install python2`
-
-## Repository Structure
-- `bootstrap.py`: Core automation script.
-- `README.md`: Setup instructions and manual checks.
+## Repository Sync
+This folder (`~/github/tariqk00`) is the root for all repositories. Ensure all projects are cloned here for consistency.
