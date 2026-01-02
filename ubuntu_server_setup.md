@@ -33,6 +33,14 @@ This guide documents the setup and configuration of my "Always-On" Ubuntu Server
 - [x] Node.js & npm
 - [x] Git
 
+### 4. Custom Automations
+#### Plaud Gmail-to-Drive
+- [x] Migrated from local environment.
+- **Path**: `/home/tariqk/github/tariqk00/plaud`
+- **Schedule**: Daily at 07:00 AM (via systemd user timer).
+- **Control**: `systemctl --user status plaud-automation.timer`
+- **Review Logs**: `journalctl --user -u plaud-automation.service -f`
+
 ## Maintenance Commands
 - **Check n8n status**: `docker logs n8n` (if using Docker)
 - **Check CasaOS status**: `sudo systemctl status casaos-gateway`
