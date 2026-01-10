@@ -67,3 +67,10 @@ Essential fixes for NUC8i5 stability on Linux (prevents random freezes).
         - `RebootWatchdogSec=30s`
     - Reload: `sudo systemctl daemon-reload`
 
+### 6. Storage Expansion
+- [x] All unallocated space merged into root filesystem.
+- **Total Capacity**: 462GB (Full SSD).
+
+## History
+For a detailed forensic timeline of this server's installation and lifecycle, see [server_history_log.md](server_history_log.md).
+
