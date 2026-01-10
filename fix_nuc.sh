@@ -40,28 +40,44 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 3. Link Service Files (Ensure we use the repository versions)
-echo -e "\n${GREEN}[3/5] Updating Service Definitions...${NC}"
+# 3. Install & Patch Service Files
+echo -e "\n${GREEN}[3/5] Updating & Patching Service Definitions...${NC}"
 mkdir -p "$USER_SYSTEMD_DIR"
 
-# Link Plaud
-if [ -f "$BASE_DIR/plaud/plaud-automation.service" ]; then
-    ln -sf "$BASE_DIR/plaud/plaud-automation.service" "$USER_SYSTEMD_DIR/plaud-automation.service"
-    ln -sf "$BASE_DIR/plaud/plaud-automation.timer" "$USER_SYSTEMD_DIR/plaud-automation.timer"
-fi
+install_service() {
+    local src=$1
+    local name=$2
+    local dest_service="$USER_SYSTEMD_DIR/$name.service"
+    local dest_timer="$USER_SYSTEMD_DIR/$name.timer"
 
-# Link AI Sorter
-if [ -f "$BASE_DIR/toolbox/google-drive/ai-sorter.service" ]; then
-    ln -sf "$BASE_DIR/toolbox/google-drive/ai-sorter.service" "$USER_SYSTEMD_DIR/ai-sorter.service"
-    ln -sf "$BASE_DIR/toolbox/google-drive/ai-sorter.timer" "$USER_SYSTEMD_DIR/ai-sorter.timer"
-fi
+    if [ -f "$src.service" ]; then
+        echo "Installing $name..."
+        # Copy file to allow editing (don't symlink)
+        cp "$src.service" "$dest_service"
+        cp "$src.timer" "$dest_timer"
 
-echo "Service files linked from repository."
+        # PATCH: Replace hardcoded /home/takhan with current $HOME
+        # Also replace %h if it exists, just to be safe and explicit
+        sed -i "s|/home/takhan|$HOME|g" "$dest_service"
+        sed -i "s|%h|$HOME|g" "$dest_service"
+        
+        echo "  -> Patched paths to: $HOME"
+    else
+        echo "  -> Warning: Source for $name not found at $src.service"
+    fi
+}
+
+# Install Plaud
+install_service "$BASE_DIR/plaud/plaud-automation" "plaud-automation"
+
+# Install AI Sorter
+install_service "$BASE_DIR/toolbox/google-drive/ai-sorter" "ai-sorter"
+
 
 # 4. Systemd Configuration
 echo -e "\n${GREEN}[4/5] Configuring Systemd Timers...${NC}"
 
-# Reload to pick up changes/links
+# Reload to pick up changes
 systemctl --user daemon-reload
 
 # Enable AI Sorter
