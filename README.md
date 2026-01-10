@@ -7,6 +7,7 @@ This repository centralizes automation scripts and documentation for my developm
 - `bootstrap.py`: Main entry point for running setup modules.
 - `dev_env_setup.py`: Local developer environment configuration (e.g., Antigravity/ChromeOS fixes).
 - `server_status.py`: Health check script for the Ubuntu Server (pings, SSH, and web services).
+- `server_reliability_patch.py`: **[NEW]** Automation script to apply critical NUC8i5 reliability fixes (Watchdog, C-states).
 - `ubuntu_server_setup.md`: Guide and checklist for setting up the "Always-On" Ubuntu Server.
 
 ## Usage

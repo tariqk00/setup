@@ -44,3 +44,26 @@ This guide documents the setup and configuration of my "Always-On" Ubuntu Server
 ## Maintenance Commands
 - **Check n8n status**: `docker logs n8n` (if using Docker)
 - **Check CasaOS status**: `sudo systemctl status casaos-gateway`
+
+### 5. NUC Reliability (CRITICAL)
+Essential fixes for NUC8i5 stability on Linux (prevents random freezes).
+
+#### 1. Disable Sleep
+- [x] Mask sleep targets: `sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target`
+
+#### 2. Kernel Stability (C-States)
+- [x] Limit C-states in GRUB:
+    - Edit `/etc/default/grub`
+    - Set: `GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1"`
+    - Run: `sudo update-grub`
+
+#### 3. Hardware Watchdog (Auto-Reboot)
+- [x] Enable `softdog` module:
+    - Unblacklist: Comment out `blacklist softdog` in `/lib/modprobe.d/blacklist_linux_*.conf` (if present).
+    - Persist: `echo 'softdog' | sudo tee /etc/modules-load.d/softdog.conf`
+- [x] Configure Systemd Watchdog:
+    - Edit `/etc/systemd/system.conf`:
+        - `RuntimeWatchdogSec=20s`
+        - `RebootWatchdogSec=30s`
+    - Reload: `sudo systemctl daemon-reload`
+
