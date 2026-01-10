@@ -2,6 +2,11 @@
 
 This repository centralizes automation scripts and documentation for my development environment and server infrastructure.
 
+> **Repository Policy**: This repo is the single source of truth for configuration across all user endpoints, including:
+> - **Chromebook**: Local development environment (VS Code, Antigravity, tools).
+> - **NUC8i5 Server**: Always-on services (CasaOS, n8n, automation).
+> - **Future Endpoints**: Any other configurable machines.
+
 ## Structure
 
 - `bootstrap.py`: Main entry point for running setup modules.
