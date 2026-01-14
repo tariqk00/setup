@@ -1,0 +1,173 @@
+{
+    "name": "Plaud to Drive Inbox V4",
+    "nodes": [
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "DRIVE_FOLDER_ID",
+                            "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "1",
+            "name": "Configuration",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "simple": false,
+                "filters": {
+                    "sender": "no-reply@plaud.ai",
+                    "subject": "plaud workflow"
+                },
+                "downloadAttachments": true
+            },
+            "id": "2",
+            "name": "Gmail Trigger",
+            "type": "n8n-nodes-base.gmailTrigger",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "YOUR_GMAIL_CREDENTIALS_ID",
+                    "name": "Gmail account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "content": "={{ $json[\"textAsHtml\"] }}",
+                "name": "={{ $json[\"date\"] }} {{ $json[\"subject\"] }}.html",
+                "parentId": "={{ $json[\"DRIVE_FOLDER_ID\"] }}"
+            },
+            "id": "3",
+            "name": "Upload Email Body",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 2,
+            "position": [
+                900,
+                200
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "YOUR_DRIVE_CREDENTIALS_ID",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "attachment",
+                "parentId": "={{ $json[\"DRIVE_FOLDER_ID\"] }}",
+                "name": "={{ $json[\"date\"] }} {{ $json[\"subject\"] }} - {{ $binary.attachment.fileName }}",
+                "binaryData": true
+            },
+            "id": "4",
+            "name": "Upload Attachments",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 2,
+            "position": [
+                900,
+                400
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "YOUR_DRIVE_CREDENTIALS_ID",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "delete",
+                "messageId": "={{ $json[\"id\"] }}"
+            },
+            "id": "5",
+            "name": "Archive Email",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                300
+            ],
+            "disabled": true,
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "YOUR_GMAIL_CREDENTIALS_ID",
+                    "name": "Gmail account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Gmail Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Configuration",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Configuration": {
+            "main": [
+                [
+                    {
+                        "node": "Upload Email Body",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Upload Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upload Email Body": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upload Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

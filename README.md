@@ -37,3 +37,15 @@ python3 server_status.py
 
 ## Repository Sync
 This folder (`~/github/tariqk00`) is the root for all repositories. Ensure all projects are cloned here for consistency.
+
+### Chrome Installation (Chromebook Fix)
+If the agent cannot detect Chrome, manually install the stable binary:
+
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt update
+sudo apt install -y ./google-chrome-stable_current_amd64.deb
+rm google-chrome-stable_current_amd64.deb
+```
+
+**Binary path for Agent Configuration:** `/usr/bin/google-chrome`
