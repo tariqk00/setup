@@ -56,11 +56,20 @@ cd toolbox/google-drive
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
+# Run System Shortcut Fixes (Critical for ChromeOS)
+cd ~/github/tariqk00/toolbox
+./scripts/fix_shortcuts.sh
+./scripts/fix_sommelier.sh
 ```
 
----
+### D. IDE Configuration (Antigravity)
 
-## 🖥️ 3. NUC Setup (Production)
+> [!IMPORTANT]
+> See `docs/gemini.md` for critical path differences in this environment.
+
+- **Config Path**: `~/.antigravity/`
+- **Data Path**: `~/.config/Antigravity/`
 
 ### A. System Prep
 
