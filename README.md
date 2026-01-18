@@ -15,6 +15,7 @@ This repository centralizes automation scripts and documentation for my developm
 - `server_status.py`: Health check script for the Ubuntu Server (pings, SSH, and web services).
 - `server_reliability_patch.py`: **[NEW]** Automation script to apply critical NUC8i5 reliability fixes (Watchdog, C-states).
 - `docs/ENV_SETUP.md`: **[MASTER GUIDE]** Comprehensive rebuild instructions for Chromebook (Dev) and NUC (Prod).
+- `docs/SYSTEM_PROMPT.md`: **[AI CONTEXT]** The "System Prompt" defining persona, stack, and environment rules.
 - `ubuntu_server_setup.md`: (Legacy) Specifics for CasaOS/n8n installation.
 
 ## Usage
