@@ -73,10 +73,16 @@ cd ~/github/tariqk00/toolbox
 
 ### A. System Prep
 
-Connect via SSH:
+Connect via SSH (User: `tariqk`, IP: `172.30.0.169`):
 
 ```bash
+# If configured in ~/.ssh/config as 'nuc'
 ssh nuc
+
+# Manual connection
+ssh tariqk@172.30.0.169
+
+# Standard Install
 sudo apt update && sudo apt install -y git python3 python3-venv
 ```
 

@@ -43,7 +43,8 @@
 
 - **Host OS:** Ubuntu 24.04 LTS (Headless).
 - **Network**: IP `172.30.0.169`, Hostname `nuc8i5-2020`.
-- **Aliases**: nuc, nuc8, nuc8i5, ubuntu server.
+- **Aliases**: nuc, nuc8, nuc8i5, ubuntu server, prod server.
+- **Access**: Passwordless SSH configured from Dev System (User: `tariqk`).
 - **Environment**: Docker Compose for container
   orchestration.
 - **User**: tariqk

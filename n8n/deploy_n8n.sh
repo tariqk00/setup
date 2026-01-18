@@ -21,4 +21,4 @@ ssh "$REMOTE_USER@$HOST" "sudo mv $REMOTE_TEMP /DATA/AppData/plaud_workflow_v5.j
 ssh "$REMOTE_USER@$HOST" "sudo docker exec -u node n8n n8n import:workflow --input=/home/node/.n8n/plaud_workflow_v5.json"
 
 echo "✅ Deployment finished."
-echo "   Please refresh your n8n UI (https://n8n.takhan.com or local) to see changes."
+echo "   Please refresh your n8n UI (https://n8n.khantastic.org or local) to see changes."

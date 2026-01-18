@@ -48,7 +48,7 @@
             ],
             "credentials": {
                 "gmailOAuth2": {
-                    "id": "YOUR_GMAIL_CREDENTIALS_ID",
+                    "id": "AVbl1VG4EuUYSNnR",
                     "name": "Gmail account"
                 }
             }
@@ -69,7 +69,7 @@
             ],
             "credentials": {
                 "googleDriveOAuth2Api": {
-                    "id": "YOUR_DRIVE_CREDENTIALS_ID",
+                    "id": "G8O3ahUTehXWQ76O",
                     "name": "Google Drive account"
                 }
             }
@@ -92,7 +92,7 @@
             ],
             "credentials": {
                 "googleDriveOAuth2Api": {
-                    "id": "YOUR_DRIVE_CREDENTIALS_ID",
+                    "id": "G8O3ahUTehXWQ76O",
                     "name": "Google Drive account"
                 }
             }
@@ -113,7 +113,7 @@
             "disabled": true,
             "credentials": {
                 "gmailOAuth2": {
-                    "id": "YOUR_GMAIL_CREDENTIALS_ID",
+                    "id": "AVbl1VG4EuUYSNnR",
                     "name": "Gmail account"
                 }
             }
