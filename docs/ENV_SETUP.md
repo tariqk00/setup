@@ -15,6 +15,7 @@ It covers the **Chromebook (Dev)** and **NUC (Prod)** environments, including au
   - Used for: Coding, Testing, Dry Runs.
   - **RESTRICTION**: No automation timers enabled.
 - **Prod Environment**: Intel NUC (`nuc8i5-2020`).
+  - **Aliases**: `nuc`, `nuc server`, `ubuntu server`, `prod`.
   - Used for: Hosted execution.
   - **FEATURE**: Runs hourly `ai-sorter.timer` automation.
 
@@ -74,6 +75,10 @@ cd ~/github/tariqk00/toolbox
 
 - **Config Path**: `~/.antigravity/`
 - **Data Path**: `~/.config/Antigravity/`
+
+---
+
+## 🖥️ 3. NUC Setup (Production)
 
 ### A. System Prep
 
