@@ -140,6 +140,22 @@ pip install -r requirements.txt
     systemctl --user enable --now ai-sorter.timer
     ```
 
+### F. Remote Access (Cloudflare Tunnel)
+
+1.  **Install**:
+    ```bash
+    curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+    sudo dpkg -i cloudflared.deb
+    ```
+2.  **Credentials**:
+    - Ensure `/etc/cloudflared/<UUID>.json` exists (from `setup/hosts/nuc-server/cloudflared/config.yml`).
+3.  **Activate**:
+    ```bash
+    sudo cp ~/github/tariqk00/setup/hosts/nuc-server/systemd/cloudflared.service /etc/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now cloudflared
+    ```
+
 ---
 
 ## 🔒 4. Secrets Management

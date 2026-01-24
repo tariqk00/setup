@@ -1,0 +1,6 @@
+tunnel: 03cc927d-52e4-4969-8ac4-b7478ad89aff
+credentials-file: /etc/cloudflared/03cc927d-52e4-4969-8ac4-b7478ad89aff.json
+ingress:
+  - hostname: n8n.khantastic.org
+    service: http://localhost:5678
+  - service: http_status:404

@@ -1,0 +1,15 @@
+[Unit]
+Description=Cloudflare Tunnel
+After=network.target
+
+[Service]
+TimeoutStartSec=0
+Type=notify
+ExecStart=/usr/bin/cloudflared tunnel run --config /home/takhan/github/tariqk00/setup/hosts/nuc-server/cloudflared/config.yml
+Restart=on-failure
+RestartSec=5s
+User=tariqk
+# Group=tariqk
+
+[Install]
+WantedBy=multi-user.target
