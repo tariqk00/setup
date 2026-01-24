@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "/home/takhan/github/tariqk00",
+            "name": "Project (tariqk00)"
+		},
+		{
+			"path": "/mnt/chromeos/GoogleDrive",
+            "name": "Google Drive"
+		}
+	],
+	"settings": {
+        "terminal.integrated.cwd": "/home/takhan",
+        "files.exclude": {
+            "**/.git": true,
+            "**/.DS_Store": true
+        },
+        "python.analysis.extraPaths": [
+            "/home/takhan/github/tariqk00/toolbox/lib",
+            "/home/takhan/github/tariqk00/toolbox/services",
+            "/home/takhan/github/tariqk00/plaud/src"
+        ],
+        "python.analysis.autoSearchPaths": true
+    }
+}
