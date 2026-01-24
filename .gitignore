@@ -18,3 +18,12 @@ thumbs.db
 # Agentic
 .agent/brain/
 .agent/memory/
+
+# Secrets
+.env
+.env.*
+credentials.json
+token.json
+*.pem
+*.key
+
