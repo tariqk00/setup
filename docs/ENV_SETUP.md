@@ -145,6 +145,17 @@ pip install -r requirements.txt
     systemctl --user enable --now ai-sorter.timer
     ```
 
+### F. Automation (n8n)
+
+> [!TIP]
+> **Detailed Guide**: See `setup/n8n/README.md` for Docker, Workflow Import, and Gmail/Drive credential setup.
+
+1.  **Overview**: n8n runs via Docker and is exposed via Cloudflare Tunnel.
+2.  **Access**: `https://n8n.khantastic.org`
+3.  **Workflows**:
+    - **Plaud Email**: Intercepts recordings and saves to Drive.
+    - **Gemini Journal**: Processes captured thoughts.
+
 ### F. Remote Access (Cloudflare Tunnel)
 
 1.  **Install**:
@@ -160,6 +171,17 @@ pip install -r requirements.txt
     sudo systemctl daemon-reload
     sudo systemctl enable --now cloudflared
     ```
+
+### G. Dashboard (CasaOS)
+
+_Optional GUI for managing Docker & Files._
+
+1.  **Install**:
+    ```bash
+    curl -fsSL https://get.casaos.io | sudo bash
+    ```
+2.  **Access**: `http://<nuc-ip>` (Port 80 by default).
+3.  **Note**: Use this to visualize the `n8n` and `github-mcp` containers managed by our system.
 
 ---
 
