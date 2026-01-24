@@ -1,0 +1,22 @@
+{
+    "mcpServers": {
+        "github": {
+            "command": "docker",
+            "args": ["run", "-i", "--rm", "mcp/github"],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "<ENV_VAR>"
+            },
+            "description": "GitHub MCP Server running via Docker"
+        },
+        "plaud": {
+            "command": "python3",
+            "args": ["/home/takhan/github/tariqk00/plaud/src/mcp_server/drive.py"],
+            "description": "Custom Plaud Drive MCP (Python Direct)"
+        },
+        "gmail": {
+            "command": "python3",
+            "args": ["/home/takhan/github/tariqk00/plaud/src/mcp_server/gmail.py"],
+            "description": "Custom Plaud Gmail MCP (Python Direct)"
+        }
+    }
+}
