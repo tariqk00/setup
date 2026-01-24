@@ -2,6 +2,33 @@
 
 This guide covers the one-time setup and workflow configuration for automating Plaud AI emails using n8n on your Ubuntu NUC.
 
+## 🌊 Pipeline Overview
+
+This n8n workflow is a critical bridge in your automated Second Brain pipeline.
+
+```mermaid
+graph TD
+    A[🎙️ Plaud Note] -->|Recording Complete| B(Plaud Cloud / AutoFlow)
+    B -->|Send Email| C[📧 Gmail]
+    C -->|Trigger| D{⚡ n8n Workflow}
+    D -->|Extract| E[Get HTML Body & Attachments]
+    E -->|Upload| F[📂 Google Drive]
+
+    subgraph "Google Drive"
+    F --> G["00 - Incoming / Plaud Upload"]
+    end
+
+    G -->|Watch & Sort| H[🤖 AI Sorter]
+    H -->|Move| I["🧠 01 - Second Brain"]
+```
+
+**Flow:**
+
+1.  **Origin**: You record on Plaud Note.
+2.  **Trigger**: Plaud AutoFlow sends an email with the recording summary/transcript.
+3.  **Bridge**: This n8n workflow intercepts the email, extracts the content (HTML + Files), and saves them to a "Stage" folder in Drive.
+4.  **Process**: Your AI Sorter picks up these files and organizes them into your Second Brain.
+
 ## 1. Environment Setup
 
 ### Production (Ubuntu NUC)
@@ -46,7 +73,12 @@ This guide covers the one-time setup and workflow configuration for automating P
 - You can access the NUC's n8n instance via the Cloudflare Tunnel URL or local IP (`http://<nuc-ip>:5678`) if on the same network.
 - No specific installation required on Chromebook unless you want a local testing instance.
 
-## 2. Google Drive Configuration
+## 2. Automated Pipelines
+
+- [**Plaud Note Pipeline**](./README.md#pipeline-overview): Handles voice memos (Email -> Drive).
+- [**Gemini Journal Pipeline**](./GEMINI_JOURNAL.md): Handles browser-based journal entries (Bookmarklet -> n8n -> Drive).
+
+## 3. Google Drive Configuration
 
 You need to manually find the ID of your target folder (`00 - Inbox`) once.
 

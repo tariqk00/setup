@@ -1,0 +1,204 @@
+{
+    "name": "Plaud Gmail to Drive (V5 - Environment Safe)",
+    "active": false,
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "simple": true,
+                "filters": {
+                    "sender": "no-reply@plaud.ai",
+                    "subject": "[PLAUD-AutoFlow]"
+                },
+                "downloadAttachments": true
+            },
+            "id": "138181c3-d993-4c19-b98b-876f9e326e1e",
+            "name": "Gmail Trigger",
+            "type": "n8n-nodes-base.gmailTrigger",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "\nconst results = [];\n\nfor (const item of items) {\n  const json = item.json;\n  // With simple: true, textAsHtml should be at root\n  const textAsHtml = json.textAsHtml || json.body || 'NO_CONTENT_FOUND'; \n  const subject = json.subject || 'No Subject';\n  const date = json.date || new Date().toISOString(); \n  \n  // V5 FIX: Use the Node helper to create binary data safely\n  // This handles the N8N_DEFAULT_BINARY_DATA_MODE=filesystem pointer logic automatically\n  const binaryBuffer = Buffer.from(textAsHtml);\n  \n  // Note: 'await' is required for the helper\n  const binaryObject = await this.helpers.prepareBinaryData(\n    binaryBuffer, \n    'email_body.html', \n    'text/html'\n  );\n  \n  // Clone existing binary to keep attachments\n  const newBinary = item.binary ? { ...item.binary } : {};\n  \n  // Assign our safe object to 'data' property\n  newBinary['data'] = binaryObject;\n\n  // Add debug info\n  json.debug_length = textAsHtml.length;\n\n  results.push({\n    json: {\n      ...json,\n      textAsHtml, \n    },\n    binary: newBinary\n  });\n}\n\nreturn results;\n"
+            },
+            "id": "8ae32db3-193e-406c-9f41-ed54524c9a5e",
+            "name": "Normalize Data & Binary",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "binary",
+                "binaryPropertyName": "data",
+                "parentId": {
+                    "__rl": true,
+                    "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                    "mode": "id"
+                },
+                "name": "={{ $json.date }} {{ $json.subject.replace(/[^a-zA-Z0-9 ]/g, '') }}-Len-{{ $json.debug_length }}.html",
+                "options": {}
+            },
+            "id": "3f91426c-cc6f-4e22-b277-faa8253e9072",
+            "name": "Save Email HTML",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                900,
+                200
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "\nconst results = [];\nif (items[0].binary) {\n    for (const key of Object.keys(items[0].binary)) {\n        if (key === 'data') continue;\n        \n        results.push({\n            json: items[0].json,\n            binary: {\n                data: items[0].binary[key]\n            }\n        });\n    }\n}\nreturn results;\n"
+            },
+            "id": "48d7ce4a-5d6d-4ea1-a8b8-a8c2ac67deb0",
+            "name": "Split Attachments",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                900,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "binary",
+                "binaryPropertyName": "data",
+                "parentId": {
+                    "__rl": true,
+                    "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                    "mode": "id"
+                },
+                "name": "={{ $json.date }} {{ $json.subject.replace(/[^a-zA-Z0-9 ]/g, '') }}-{{ $binary.data.fileName }}",
+                "options": {}
+            },
+            "id": "c341df30-628e-4e63-87f2-5d213d0f7c77",
+            "name": "Save Attachments",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                1120,
+                500
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "delete",
+                "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+            },
+            "id": "017c194d-787d-4e82-80c3-88497f494aee",
+            "name": "Archive Email",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                350
+            ],
+            "disabled": true,
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Gmail Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Normalize Data & Binary",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Normalize Data & Binary": {
+            "main": [
+                [
+                    {
+                        "node": "Save Email HTML",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Split Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Email HTML": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Save Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {},
+    "versionId": "bd347f74-6f32-40cb-ace1-21817cbd8392"
+}

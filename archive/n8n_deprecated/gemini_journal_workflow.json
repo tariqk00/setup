@@ -1,0 +1,123 @@
+{
+    "updatedAt": "2026-01-19T15:14:34.316Z",
+    "createdAt": "2026-01-19T04:51:43.898Z",
+    "id": "zooS9ZN9JCKUSpHq",
+    "name": "Gemini Journal to Drive",
+    "description": null,
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+        {
+            "parameters": {
+                "jsCode": "// Extract date from the Markdown header: ## Journal Entry: [[YYYY-MM-DD]]\nconst regex = /## Journal Entry: \\[\\[(\\d{4}-\\d{2}-\\d{2})\\]\\]/;\nconst match = $json.body.match(regex);\nconst date = match ? match[1] : new Date().toISOString().split('T')[0];\n\nreturn {\n  date: date,\n  fileName: `Journal Entry: ${date}`,\n  content: $json.body\n};"
+            },
+            "id": "5548beaa-f7d6-4b1a-a812-658dc48b4ed3",
+            "name": "Parse Date",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                176,
+                -208
+            ]
+        },
+        {
+            "parameters": {
+                "driveId": {
+                    "__rl": true,
+                    "value": "My Drive",
+                    "mode": "list",
+                    "cachedResultName": "My Drive",
+                    "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+                },
+                "folderId": {
+                    "__rl": true,
+                    "value": "1HERen6HP4uDLMXV8Vj_cLOJ3xpT6QV2dLuBVm6z9i__is2Jmw0px2qPhy-72NrlsOhXyLB-Y",
+                    "mode": "list"
+                },
+                "options": {}
+            },
+            "id": "e2e93d10-6862-490d-a654-7adaf2d77839",
+            "name": "Upload to Drive",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                368,
+                -208
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "formTitle": "Journal Ingest",
+                "formDescription": "Select the Journal text and paste it here, n8n will take care of the rest",
+                "formFields": {
+                    "values": [
+                        {
+                            "fieldLabel": "body",
+                            "fieldType": "textarea"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.formTrigger",
+            "typeVersion": 2.3,
+            "position": [
+                -48,
+                -208
+            ],
+            "id": "86772b07-e77b-480b-a527-dc6dbdc10cd3",
+            "name": "On form submission",
+            "webhookId": "bfcfbb81-c125-406a-8f36-2f151fa8c1b0"
+        }
+    ],
+    "connections": {
+        "On form submission": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Date",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+        "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "80d858fa-87f6-43b7-827c-f086398d5630",
+    "activeVersionId": "80d858fa-87f6-43b7-827c-f086398d5630",
+    "versionCounter": 5,
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+        {
+            "updatedAt": "2026-01-19T04:51:43.901Z",
+            "createdAt": "2026-01-19T04:51:43.901Z",
+            "role": "workflow:owner",
+            "workflowId": "zooS9ZN9JCKUSpHq",
+            "projectId": "54wrnsml1SEyYEM9",
+            "project": {
+                "updatedAt": "2026-01-11T22:54:31.702Z",
+                "createdAt": "2026-01-11T22:45:11.125Z",
+                "id": "54wrnsml1SEyYEM9",
+                "name": "Tariq takhan@gmail.com <takhan@gmail.com>",
+                "type": "personal",
+                "icon": null,
+                "description": null
+            }
+        }
+    ]
+}

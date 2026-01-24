@@ -1,0 +1,204 @@
+{
+    "name": "Plaud Gmail to Drive (V6 - JSON Dump)",
+    "active": false,
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "simple": true,
+                "filters": {
+                    "sender": "no-reply@plaud.ai",
+                    "subject": "[PLAUD-AutoFlow]"
+                },
+                "downloadAttachments": true
+            },
+            "id": "b48505be-4ad5-4125-9d3e-ce3dac27c1cd",
+            "name": "Gmail Trigger",
+            "type": "n8n-nodes-base.gmailTrigger",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "\nconst results = [];\n\nfor (const item of items) {\n  const json = item.json;\n  \n  // V6: Dump everything to see what we have\n  const dumpString = JSON.stringify(json, null, 2);\n  \n  const subject = json.subject || 'No Subject';\n  const date = json.date || new Date().toISOString(); \n  \n  // Safe Binary Fetch (Verified working in V5)\n  const binaryBuffer = Buffer.from(dumpString);\n  const binaryObject = await this.helpers.prepareBinaryData(\n    binaryBuffer, \n    'debug_dump.json', \n    'application/json'\n  );\n  \n  const newBinary = item.binary ? { ...item.binary } : {};\n  newBinary['data'] = binaryObject;\n\n  results.push({\n    json: {\n      ...json\n    },\n    binary: newBinary\n  });\n}\n\nreturn results;\n"
+            },
+            "id": "916f19de-5bbb-448a-90c4-72273b2ca218",
+            "name": "Dump JSON & Binary",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "binary",
+                "binaryPropertyName": "data",
+                "parentId": {
+                    "__rl": true,
+                    "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                    "mode": "id"
+                },
+                "name": "={{ $json.date }} {{ $json.subject.replace(/[^a-zA-Z0-9 ]/g, '') }}-DEBUG-DUMP.json",
+                "options": {}
+            },
+            "id": "be1615c5-165e-4c4b-ae6b-14e3d118996b",
+            "name": "Save Debug Dump",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                900,
+                200
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "\nconst results = [];\nif (items[0].binary) {\n    for (const key of Object.keys(items[0].binary)) {\n        if (key === 'data') continue;\n        \n        results.push({\n            json: items[0].json,\n            binary: {\n                data: items[0].binary[key]\n            }\n        });\n    }\n}\nreturn results;\n"
+            },
+            "id": "0399ff84-35c9-4c50-ba1e-c2cd2116352b",
+            "name": "Split Attachments",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                900,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "binary",
+                "binaryPropertyName": "data",
+                "parentId": {
+                    "__rl": true,
+                    "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                    "mode": "id"
+                },
+                "name": "={{ $json.date }} {{ $json.subject.replace(/[^a-zA-Z0-9 ]/g, '') }}-{{ $binary.data.fileName }}",
+                "options": {}
+            },
+            "id": "a12f6631-15b7-44f8-acdb-26341af80766",
+            "name": "Save Attachments",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                1120,
+                500
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "delete",
+                "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+            },
+            "id": "cd7cc9bd-2bac-43d8-b4a6-cc223754652a",
+            "name": "Archive Email",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                350
+            ],
+            "disabled": true,
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Gmail Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Dump JSON & Binary",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Dump JSON & Binary": {
+            "main": [
+                [
+                    {
+                        "node": "Save Debug Dump",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Split Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Debug Dump": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Save Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {},
+    "versionId": "e0a10869-5f2d-49a4-923a-aaebcc496b95"
+}

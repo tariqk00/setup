@@ -1,7 +1,7 @@
 {
     "active": false,
     "versionId": "GENERATE_UUID_HERE",
-    "name": "Plaud to Drive Inbox V4",
+    "name": "Plaud to Drive Inbox V6",
     "nodes": [
         {
             "parameters": {
@@ -57,9 +57,9 @@
         },
         {
             "parameters": {
-                "content": "={{ $json.textAsHtml || $json.text }}",
-                "name": "={{ $json.date }} {{ $json.subject.replace(/[^a-zA-Z0-9 ]/g, \"\") }}.html",
-                "parentId": "={{ $json[\"DRIVE_FOLDER_ID\"] }}"
+                "content": "={{ $(\"Gmail Trigger\").item.json.textAsHtml || $(\"Gmail Trigger\").item.json.text || $(\"Gmail Trigger\").item.json.snippet }}",
+                "name": "={{ $(\"Gmail Trigger\").item.json.date }} {{ $(\"Gmail Trigger\").item.json.subject.replace(/[^a-zA-Z0-9 ]/g, \"\") }}.html",
+                "parentId": "16N14A_m847eSortz8hxbfhrk0YyvtouD"
             },
             "id": "3",
             "name": "Upload Email Body",
@@ -80,8 +80,8 @@
             "parameters": {
                 "operation": "upload",
                 "fileSelector": "data",
-                "parentId": "={{ $json[\"DRIVE_FOLDER_ID\"] }}",
-                "name": "={{ $json.date }} {{ $json.subject.replace(/[^a-zA-Z0-9 ]/g, \"\") }} - {{ $binary.data.fileName }}",
+                "parentId": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                "name": "={{ $(\"Gmail Trigger\").item.json.date }} {{ $(\"Gmail Trigger\").item.json.subject.replace(/[^a-zA-Z0-9 ]/g, \"\") }} - {{ $binary.data.fileName }}",
                 "binaryData": true
             },
             "id": "4",

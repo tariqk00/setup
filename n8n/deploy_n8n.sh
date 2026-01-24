@@ -4,8 +4,8 @@
 
 HOST="${1:-nuc}"
 REMOTE_USER="tariqk"
-LOCAL_FILE="setup/n8n/plaud_workflow_v5.json"
-REMOTE_TEMP="/home/tariqk/plaud_workflow_v5.json"
+LOCAL_FILE="setup/n8n/plaud_workflow_new_v8.json"
+REMOTE_TEMP="/home/tariqk/plaud_workflow_new_v8.json"
 
 echo "🚀 Deploying $LOCAL_FILE to $REMOTE_USER@$HOST..."
 

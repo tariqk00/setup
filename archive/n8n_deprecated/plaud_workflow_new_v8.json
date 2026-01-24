@@ -1,0 +1,204 @@
+{
+    "name": "Plaud Gmail to Drive (V8 - Perfect Filename)",
+    "active": false,
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "simple": true,
+                "filters": {
+                    "sender": "no-reply@plaud.ai",
+                    "subject": "[PLAUD-AutoFlow]"
+                },
+                "downloadAttachments": true
+            },
+            "id": "7642ccf8-d203-4bd1-b8fe-689ce3642a4a",
+            "name": "Gmail Trigger",
+            "type": "n8n-nodes-base.gmailTrigger",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "\nconst results = [];\n\nfor (const item of items) {\n  const json = item.json;\n  \n  // 1. Content Fallback (Working!)\n  let content = json.textAsHtml || json.text || json.snippet || 'NO_CONTENT_FOUND';\n  if (!json.textAsHtml && !json.text) {\n    content = `<html><body><h3>Auto-Generated Snippet</h3><p>${content}</p></body></html>`;\n  }\n\n  // 2. Key Normalization (Fix for Filename)\n  // Handle Subject, subject, Date, date, internalDate\n  const rawSubject = json.subject || json.Subject || 'No Subject';\n  const rawDate = json.date || json.Date || json.internalDate || new Date();\n  \n  // Format Date for Filename (YYYY-MM-DD-HH-MM)\n  const d = new Date(rawDate);\n  const dateStr = d.getFullYear() + \"-\" + \n    (\"0\" + (d.getMonth() + 1)).slice(-2) + \"-\" + \n    (\"0\" + d.getDate()).slice(-2) + \"-\" + \n    (\"0\" + d.getHours()).slice(-2) + \"-\" + \n    (\"0\" + d.getMinutes()).slice(-2);\n\n  // Clean Subject for Filename\n  const cleanSubject = rawSubject.replace(/[^a-zA-Z0-9 ]/g, '').trim();\n\n  // 3. Prepare Binary (Safe Helper)\n  const binaryBuffer = Buffer.from(content);\n  const binaryObject = await this.helpers.prepareBinaryData(\n    binaryBuffer, \n    `${dateStr} ${cleanSubject}-Email.html`, \n    'text/html'\n  );\n  \n  const newBinary = item.binary ? { ...item.binary } : {};\n  newBinary['data'] = binaryObject;\n\n  results.push({\n    json: {\n      ...json,\n      // EXPLICITLY overwrite these for the Drive node expression\n      normalized_date: dateStr,\n      normalized_subject: cleanSubject,\n      final_content_source: json.textAsHtml ? 'html' : 'snippet'\n    },\n    binary: newBinary\n  });\n}\n\nreturn results;\n"
+            },
+            "id": "31f4f644-3501-4901-b211-f2b87d378aae",
+            "name": "Normalize Data & Binary",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "binary",
+                "binaryPropertyName": "data",
+                "parentId": {
+                    "__rl": true,
+                    "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                    "mode": "id"
+                },
+                "name": "={{ $json.normalized_date }} {{ $json.normalized_subject }}-Email.html",
+                "options": {}
+            },
+            "id": "c3383409-e450-4b58-bbb4-373aff09027e",
+            "name": "Save Email HTML",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                900,
+                200
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "\nconst results = [];\nif (items[0].binary) {\n    for (const key of Object.keys(items[0].binary)) {\n        if (key === 'data') continue;\n        \n        results.push({\n            json: items[0].json,\n            binary: {\n                data: items[0].binary[key]\n            }\n        });\n    }\n}\nreturn results;\n"
+            },
+            "id": "279ba9b3-8575-47eb-9f81-c31f5d6bc089",
+            "name": "Split Attachments",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                900,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "binary",
+                "binaryPropertyName": "data",
+                "parentId": {
+                    "__rl": true,
+                    "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                    "mode": "id"
+                },
+                "name": "={{ $json.normalized_date }} {{ $json.normalized_subject }}-{{ $binary.data.fileName }}",
+                "options": {}
+            },
+            "id": "db733c08-79e7-4cf8-a681-fa513bac1808",
+            "name": "Save Attachments",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                1120,
+                500
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "delete",
+                "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+            },
+            "id": "6b920a1d-7482-4c88-aad7-5569dfdc5a2d",
+            "name": "Archive Email",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                350
+            ],
+            "disabled": true,
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Gmail Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Normalize Data & Binary",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Normalize Data & Binary": {
+            "main": [
+                [
+                    {
+                        "node": "Save Email HTML",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Split Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Email HTML": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Save Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {},
+    "versionId": "20895dff-f0e5-477d-a240-e62455687a22"
+}

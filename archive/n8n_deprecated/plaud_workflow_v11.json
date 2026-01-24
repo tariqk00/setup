@@ -1,0 +1,202 @@
+{
+    "active": false,
+    "versionId": "e3cf824e-eea8-45ee-8281-57055cdd18c1",
+    "name": "Plaud to Drive Inbox V11 (Hardcoded Test)",
+    "nodes": [
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "DRIVE_FOLDER_ID",
+                            "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "1",
+            "name": "Configuration",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "simple": true,
+                "filters": {
+                    "sender": "no-reply@plaud.ai",
+                    "subject": "plaud workflow"
+                },
+                "downloadAttachments": true
+            },
+            "id": "2",
+            "name": "Gmail Trigger",
+            "type": "n8n-nodes-base.gmailTrigger",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "content": "This is a hardcoded test string to verify file writing works.",
+                "name": "v11_test_file.txt",
+                "parentId": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                "binaryData": false
+            },
+            "id": "3",
+            "name": "Upload Email Body",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 2,
+            "position": [
+                900,
+                200
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "upload",
+                "fileSelector": "data",
+                "parentId": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+                "name": "={{ $(\"Gmail Trigger\").item.json.date }} {{ $(\"Gmail Trigger\").item.json.subject.replace(/[^a-zA-Z0-9 ]/g, \"\") }} - {{ $binary.data.fileName }}",
+                "binaryData": true
+            },
+            "id": "4",
+            "name": "Upload Attachments",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 2,
+            "position": [
+                900,
+                500
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "G8O3ahUTehXWQ76O",
+                    "name": "Google Drive account"
+                }
+            },
+            "disabled": true
+        },
+        {
+            "parameters": {
+                "operation": "delete",
+                "messageId": "={{ $json[\"id\"] }}"
+            },
+            "id": "5",
+            "name": "Archive Email",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                300
+            ],
+            "disabled": true,
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "AVbl1VG4EuUYSNnR",
+                    "name": "Gmail account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "\nconst results = [];\nfor (const item of items) {\n  if (item.binary) {\n    for (const key of Object.keys(item.binary)) {\n      results.push({\n        json: {\n          ...item.json,\n          original_binary_key: key\n        },\n        binary: {\n          data: item.binary[key]\n        }\n      });\n    }\n  }\n}\nreturn results;\n"
+            },
+            "id": "split_attachments_node",
+            "name": "Split Attachments",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                680,
+                500
+            ],
+            "disabled": true
+        }
+    ],
+    "connections": {
+        "Gmail Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Configuration",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Configuration": {
+            "main": [
+                [
+                    {
+                        "node": "Upload Email Body",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Split Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upload Email Body": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upload Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Archive Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Attachments": {
+            "main": [
+                [
+                    {
+                        "node": "Upload Attachments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
