@@ -17,6 +17,19 @@
             "command": "python3",
             "args": ["/home/takhan/github/tariqk00/plaud/src/mcp_server/gmail.py"],
             "description": "Custom Plaud Gmail MCP (Python Direct)"
+        },
+        "n8n": {
+            "command": "docker",
+            "args": [
+                "run", "-i", "--rm", "--init",
+                "-e", "MCP_MODE=stdio",
+                "-e", "LOG_LEVEL=error",
+                "-e", "N8N_MCP_TELEMETRY_DISABLED=true",
+                "-e", "N8N_HOST=http://172.30.0.169:5678",
+                "-e", "N8N_API_KEY=<API_KEY>",
+                "ghcr.io/czlonkowski/n8n-mcp:latest"
+            ],
+            "description": "N8N MCP Server - requires --init and telemetry disabled for Antigravity compatibility"
         }
     }
 }
