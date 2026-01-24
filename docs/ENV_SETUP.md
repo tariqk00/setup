@@ -1,6 +1,10 @@
 # Master Environment Setup: Chromebook & NUC
 
-This is the definitive guide for rebuilding the ecosystem. It covers the **Chromebook (Dev)** and **NUC (Prod)** environments, including authentication, git deployment, and automation rules.
+This is the definitive "Manual" for rebuilding and operating the ecosystem.
+
+> **For AI Rules & Stack Preferences**: See `setup/docs/SYSTEM_PROMPT.md`.
+
+It covers the **Chromebook (Dev)** and **NUC (Prod)** environments, including authentication, git deployment, and automation rules.
 
 ---
 

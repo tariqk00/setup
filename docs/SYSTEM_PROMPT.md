@@ -39,27 +39,18 @@
 - **Primary Shared Storage**: Google Drive
 - **Preferred AI Tools**: Plaud Note Pro (for transcriptions), NotebookLM (for deep analysis).
 
-## 6. Home Server Infrastructure (NUC8 i5)
+## 6. Infrastructure Context
 
-- **Host OS:** Ubuntu 24.04 LTS (Headless).
-- **Network**: IP `172.30.0.169`, Hostname `nuc8i5-2020`.
-- **Aliases**: nuc, nuc8, nuc8i5, ubuntu server, prod server.
-- **Access**: Passwordless SSH configured from Dev System (User: `tariqk`).
-- **Environment**: Docker Compose for container
-  orchestration.
-- **User**: tariqk
-- **Key Services:**
-- **Deployment Rules:**
-  - **STRICT Separation**:
-    - **Chromebook (Dev)**: Code/Test only. **NO automation timers**.
-    - **NUC (Prod)**: Runs all automation.
-  - **Git Strategy**:
-    - **Chromebook**: Push enabling. Authenticated via `id_ed25519_antigravity`.
-    - **NUC**: Read/Pull only. Authenticated via Deploy Key.
-    - **Documentation**: Infrastructure/Setup docs MUST live in `tariqk00/setup`. Application code lives in `tariqk00/toolbox`.
-  - Always provide `docker-compose.yaml` snippets for new services.
-  - Use `systemd` timers for any host-level maintenance scripts.
-  - Target the `/opt/` directory for persistent application data.
+> **Operational Source of Truth**: See `setup/docs/ENV_SETUP.md` for IPs, Ports, and Rebuild Commands.
+
+- **Host OS:** Ubuntu 24.04 LTS (NUC8i5).
+- **Client:** ChromeOS (Asus CX5403).
+- **Deployment Strategy:**
+  - **Chromebook**: Development (Push).
+  - **NUC Server**: Production (Pull/Run).
+  - **Separation**: strict separation of concerns; NUC runs automation, Chromebook writes code.
+
+## 7. Project Standards (Updated Jan 2026)
 
 ## 7. Project Standards (Updated Jan 2026)
 
