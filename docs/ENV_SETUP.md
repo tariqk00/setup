@@ -95,7 +95,18 @@ ssh tariqk@172.30.0.169
 sudo apt update && sudo apt install -y git python3 python3-venv
 ```
 
-### B. NUC Reliability (Hardware Fixes)
+### B. Dashboard (CasaOS)
+
+_Primary Interface & Docker Manager._
+
+1.  **Install**:
+    ```bash
+    curl -fsSL https://get.casaos.io | sudo bash
+    ```
+2.  **Access**: `http://<nuc-ip>` (Port 80/81).
+3.  **Usage**: Installed first to manage subsequent Docker containers.
+
+### C. NUC Reliability (Hardware Fixes)
 
 _Prevents random freezes on NUC8i5._
 
@@ -103,7 +114,7 @@ _Prevents random freezes on NUC8i5._
 2.  **Limit C-States**: `GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1"` in `/etc/default/grub`.
 3.  **Watchdog**: Enable `softdog` in `/etc/modules-load.d/` and `RuntimeWatchdogSec=20s` in `/etc/systemd/system.conf`.
 
-### C. GitHub Authorization (Deploy Key)
+### D. GitHub Authorization (Deploy Key)
 
 Since the NUC is a headless server, we use a **Deploy Key**.
 
@@ -116,7 +127,7 @@ Since the NUC is a headless server, we use a **Deploy Key**.
     - Go to: `https://github.com/tariqk00/toolbox/settings/keys`
     - Add new Deploy Key (Read/Write recommended for logging).
 
-### D. Deploy Code
+### E. Deploy Code
 
 ```bash
 mkdir -p ~/github/tariqk00
@@ -130,7 +141,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### E. Automation (The "Live" Switch)
+### F. Automation (The "Live" Switch)
 
 1.  **Enable Linger**: `sudo loginctl enable-linger tariqk`
 2.  **Install Service Files**:
@@ -145,7 +156,7 @@ pip install -r requirements.txt
     systemctl --user enable --now ai-sorter.timer
     ```
 
-### F. Automation (n8n)
+### G. Automation (n8n)
 
 > [!TIP]
 > **Detailed Guide**: See `setup/n8n/README.md` for Docker, Workflow Import, and Gmail/Drive credential setup.
@@ -156,7 +167,7 @@ pip install -r requirements.txt
     - **Plaud Email**: Intercepts recordings and saves to Drive.
     - **Gemini Journal**: Processes captured thoughts.
 
-### F. Remote Access (Cloudflare Tunnel)
+### H. Remote Access (Cloudflare Tunnel)
 
 1.  **Install**:
     ```bash
