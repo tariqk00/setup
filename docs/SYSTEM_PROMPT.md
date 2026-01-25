@@ -39,18 +39,29 @@
 - **Primary Shared Storage**: Google Drive
 - **Preferred AI Tools**: Plaud Note Pro (for transcriptions), NotebookLM (for deep analysis).
 
-## 6. Infrastructure Context
+## 6. Home Server Infrastructure (NUC8 i5)
 
-> **Operational Source of Truth**: See `setup/docs/ENV_SETUP.md` for IPs, Ports, and Rebuild Commands.
-
-- **Host OS:** Ubuntu 24.04 LTS (NUC8i5).
-- **Client:** ChromeOS (Asus CX5403).
-- **Deployment Strategy:**
-  - **Chromebook**: Development (Push).
-  - **NUC Server**: Production (Pull/Run).
-  - **Separation**: strict separation of concerns; NUC runs automation, Chromebook writes code.
-
-## 7. Project Standards (Updated Jan 2026)
+- **Host OS:** Ubuntu 24.04 LTS (Headless).
+- **Network**: IP `172.30.0.169`, Hostname `nuc8i5-2020`.
+- **Aliases**: nuc, nuc8, nuc8i5, ubuntu server.
+- **Environment**: Docker Compose for container orchestration.
+- **User**: tariqk
+- **Key Services:**
+- **Deployment Rules:**
+  - **STRICT Separation**:
+    - **Chromebook (Dev)**: Code/Test only. **NO automation timers**.
+    - **NUC (Prod)**: Runs all automation.
+  - **Git Strategy**:
+    - **Chromebook**: Push enabled. Authenticated via `id_ed25519_antigravity`.
+    - **NUC**: Read/Pull only. Authenticated via Deploy Key.
+    - **Documentation**: Infrastructure/Setup docs MUST live in `tariqk00/setup`. Application code lives in `tariqk00/toolbox`.
+  - Always provide `docker-compose.yaml` snippets for new services.
+  - Use `systemd` timers for any host-level maintenance scripts.
+  - Target the `/opt/` directory for persistent application data.
+  - **Deployment Preference Order** (for workflows, configs, etc.):
+    1. **MCP Server** (e.g., `n8n_create_workflow`, `push_files`)
+    2. **SSH + GitHub** (push from Chromebook, pull on NUC, API call)
+    3. **Manual UI** (last resort)
 
 ## 7. Project Standards (Updated Jan 2026)
 
@@ -67,8 +78,26 @@
 - `tariqk00/setup`: Source of Truth for Infrastructure, Build Manifests, and Setup Docs.
 - `tariqk00/toolbox`: Source of Truth for Application Code and Automation Logic.
 
-## 9. Active Workflows
+## 9. MCP Servers (Antigravity Extensions)
 
-1. **Google Drive Sorting**: Inbox handling & automated organization
-2. **Plaud AI Integration**: Processing recordings via n8n & email
-3. **Cloudflared Setup**: _In Progress_ (Remote access for NUC)
+> **Config**: `~/.gemini/antigravity/mcp_config.json`
+
+| Server              | Transport | Description             | Key Tools                                                                       |
+| ------------------- | --------- | ----------------------- | ------------------------------------------------------------------------------- |
+| `github-mcp-server` | Docker    | GitHub API access       | `search_repositories`, `get_file_contents`, `push_files`, `create_pull_request` |
+| `n8n-mcp-server`    | Docker    | n8n workflow management | `get_node`, `validate_workflow`, `n8n_create_workflow`, `n8n_list_workflows`    |
+| `docker-nuc`        | SSH       | Remote Docker on NUC    | `list_containers`, `run_container`, `fetch_container_logs`                      |
+| `google-drive`      | Python    | Google Drive access     | `search` (file search)                                                          |
+
+**Usage Notes:**
+
+- Use `n8n-mcp-server` for deploying workflows directly instead of manual JSON import.
+- Use `docker-nuc` to manage containers on the NUC without SSH-ing manually.
+- All servers have been verified working (Jan 2026).
+
+## 10. Active Workflows
+
+1. **Google Drive Sorting**: Inbox handling & automated organization (`ai-sorter.timer` on NUC).
+2. **Plaud AI Integration**: Processing recordings via n8n & email.
+3. **Readwise Daily Digest**: Fetches unread articles, summarizes via Gemini, posts to Google Chat.
+4. **Cloudflared Setup**: _In Progress_ (Remote access for NUC).

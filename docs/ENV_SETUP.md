@@ -203,3 +203,67 @@ _Note: These are NOT in Git._
 
 - **Google Credentials**: `credentials.json` and `token.json` must be manually SCP'd to `toolbox/google-drive/`.
 - **Gemini Key**: Export `GEMINI_API_KEY` in environment or `.env` file.
+
+---
+
+## 🤖 5. MCP Server Configuration (Antigravity)
+
+> **Config Path**: `~/.gemini/antigravity/mcp_config.json`
+
+### Active Servers
+
+| Server              | Transport | Description                        |
+| ------------------- | --------- | ---------------------------------- |
+| `github-mcp-server` | Docker    | GitHub API (search, commits, PRs)  |
+| `n8n-mcp-server`    | Docker    | n8n workflow management (19 tools) |
+| `docker-nuc`        | SSH       | Remote Docker on NUC               |
+| `google-drive`      | Python    | Google Drive search                |
+
+### Server Details
+
+#### github-mcp-server
+
+- **Image**: `ghcr.io/github/github-mcp-server`
+- **Auth**: `GITHUB_PERSONAL_ACCESS_TOKEN` (env var)
+- **Disabled**: Issue/PR write tools (safety)
+
+#### n8n-mcp-server
+
+- **Image**: `ghcr.io/czlonkowski/n8n-mcp:latest`
+- **Auth**: `N8N_API_KEY` (JWT token from n8n Settings → Public API)
+- **Host**: `http://172.30.0.169:5678`
+- **Key Tools**: `n8n_create_workflow`, `n8n_list_workflows`, `validate_workflow`
+
+#### docker-nuc
+
+- **Transport**: SSH to `tariqk@172.30.0.169`
+- **Binary**: `/home/tariqk/mcp-venv/bin/mcp-server-docker`
+- **Disabled**: Destructive tools (remove_image, remove_volume)
+
+#### google-drive
+
+- **Transport**: Local Python
+- **Path**: `toolbox/mcp-servers/gdrive/server.py`
+- **Auth**: Uses `credentials.json` from `toolbox/google-drive/`
+
+---
+
+## 📋 6. n8n Workflows
+
+| Workflow              | Trigger       | Description                                          |
+| --------------------- | ------------- | ---------------------------------------------------- |
+| Plaud Gmail to Drive  | Gmail polling | Intercepts Plaud recordings, saves to Drive          |
+| Readwise Daily Digest | Cron (7 AM)   | Fetches unread articles, Gemini summary, Google Chat |
+
+### Workflow Files
+
+- **Source of Truth**: `toolbox/n8n/`
+- **Deploy via**: `n8n-mcp-server` (`n8n_create_workflow` tool)
+
+### Deployment Preference Order
+
+When deploying workflows or configs to the NUC:
+
+1. **MCP Server** – Use `n8n_create_workflow` or `docker-nuc` tools directly.
+2. **SSH + GitHub** – Push from Chromebook, `git pull` on NUC, then API call.
+3. **Manual UI** – Last resort; use n8n's Import function.
