@@ -68,6 +68,10 @@
 - **AI SDK**: Use `google-genai` (v2) for all Gemini interactions.
 - **Logging**: Implement "Hybrid Logging" (Local Rotation + Drive Sync) for all long-running tasks.
 - **Config**: Externalize mapping/config to JSON; do not hardcode in Python.
+- **n8n Workflows**:
+  - **Never hardcode API tokens** in workflow JSON—use n8n credential system (Header Auth, OAuth2, etc.).
+  - Use versioned names (e.g., `Workflow Name v2`) for tracking breaking changes.
+  - Store workflow JSON in `toolbox/n8n/` for version control.
 
 ## 8. Active Repositories
 
