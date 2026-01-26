@@ -5,6 +5,71 @@
 
 This document tracks all automated workflows and scheduled tasks that help organize my digital life. Update this whenever a new automation is created.
 
+## Architecture Overview
+
+```mermaid
+flowchart TB
+    subgraph External["External Services"]
+        READWISE["📚 Readwise Reader"]
+        PLAUD["🎙️ Plaud.ai"]
+        GMAIL["📧 Gmail"]
+        GFORM["📝 Google Form"]
+    end
+
+    subgraph NUC["NUC Server (172.30.0.169)"]
+        subgraph n8n["n8n Workflows"]
+            RD["Readwise Daily Digest v3"]
+            PE["Plaud Emails to Drive"]
+            GJ["Gemini Journal to Drive"]
+        end
+
+        subgraph systemd["systemd Timers"]
+            AI["ai-sorter.timer"]
+            PA["plaud-automation.timer"]
+        end
+
+        GEMINI["🤖 Gemini AI"]
+    end
+
+    subgraph Storage["Google Drive"]
+        INBOX["📥 Inbox"]
+        PLAUD_FOLDER["🎙️ Plaud Recordings"]
+        JOURNAL_FOLDER["📓 Journal"]
+        SORTED["📂 Sorted Folders"]
+    end
+
+    subgraph Notifications["Notifications"]
+        GCHAT["💬 Google Chat\n(Automations Space)"]
+    end
+
+    %% Data flows
+    READWISE -->|"API: top 3 articles"| RD
+    RD -->|"summarize"| GEMINI
+    RD -->|"daily digest"| GCHAT
+
+    PLAUD -->|"email with audio"| GMAIL
+    GMAIL -->|"trigger"| PE
+    PE -->|"upload"| PLAUD_FOLDER
+
+    GFORM -->|"submission"| GJ
+    GJ -->|"save entry"| JOURNAL_FOLDER
+
+    AI -->|"organize files"| INBOX
+    INBOX -->|"sorted"| SORTED
+
+    PA -->|"sync recordings"| PLAUD_FOLDER
+```
+
+### Data Flow Summary
+
+| Source               | Automation              | Destination    | Frequency  |
+| -------------------- | ----------------------- | -------------- | ---------- |
+| Readwise Reader      | Readwise Daily Digest   | Google Chat    | Daily 7 AM |
+| Gmail (Plaud emails) | Plaud Emails to Drive   | Google Drive   | On email   |
+| Google Form          | Gemini Journal to Drive | Google Drive   | On submit  |
+| Drive Inbox          | ai-sorter.timer         | Sorted folders | Daily 3 AM |
+| Plaud.ai             | plaud-automation.timer  | Google Drive   | Daily 7 AM |
+
 ---
 
 ## n8n Workflows
