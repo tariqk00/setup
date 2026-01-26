@@ -101,32 +101,21 @@
 
 ## 10. Backend Services (NUC)
 
-> These are automated tasks running on the NUC that handle important workflows. Check these when debugging automation failures.
+> **Full documentation**: [AUTOMATIONS.md](file:///home/takhan/github/tariqk00/setup/docs/AUTOMATIONS.md)
 
 ### n8n Workflows (Active)
 
-| ID                 | Workflow                     | Trigger    | Notes                                         |
-| ------------------ | ---------------------------- | ---------- | --------------------------------------------- |
-| `2kOEwBPdA1wuqakp` | **Readwise Daily Digest v3** | Cron 7 AM  | Posts to Google Chat (`tariq@techs4good.org`) |
-| `3XQNRaYmVsEgwnP4` | **Plaud Emails to Drive**    | Gmail poll | Saves Plaud recordings to Drive               |
-| `zooS9ZN9JCKUSpHq` | **Gemini Journal to Drive**  | ?          | Journal automation                            |
-
-> **Note**: Google Chat webhooks require **Google Workspace** accounts (e.g., `techs4good.org`). Consumer Gmail doesn't support them.
+| Workflow                     | Trigger         | Purpose                                                        |
+| ---------------------------- | --------------- | -------------------------------------------------------------- |
+| **Readwise Daily Digest v3** | Cron 7 AM       | Summarizes unread articles via Gemini AI, posts to Google Chat |
+| **Plaud Emails to Drive**    | Gmail poll      | Saves Plaud.ai voice recordings from email to Google Drive     |
+| **Gemini Journal to Drive**  | Form submission | Archives journal entries submitted via Google Form             |
 
 ### systemd Timers
 
-| Timer                    | Schedule    | Service                    | Description                     |
-| ------------------------ | ----------- | -------------------------- | ------------------------------- |
-| `ai-sorter.timer`        | 3:00 AM UTC | `ai-sorter.service`        | Google Drive inbox organization |
-| `plaud-automation.timer` | 7:00 AM UTC | `plaud-automation.service` | Plaud recording processing      |
+| Timer                    | Schedule | Purpose                                    |
+| ------------------------ | -------- | ------------------------------------------ |
+| `ai-sorter.timer`        | 3 AM UTC | AI-powered Google Drive inbox organization |
+| `plaud-automation.timer` | 7 AM UTC | Plaud.ai recording processing and sync     |
 
-**Management:**
-
-```bash
-# Check timer status
-systemctl --user list-timers
-
-# View logs
-journalctl --user -u ai-sorter.service
-journalctl --user -u plaud-automation.service
-```
+> **Note**: Update [AUTOMATIONS.md](file:///home/takhan/github/tariqk00/setup/docs/AUTOMATIONS.md) when adding new automations.
