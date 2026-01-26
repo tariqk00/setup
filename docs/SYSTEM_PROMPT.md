@@ -99,9 +99,31 @@
 - Use `docker-nuc` to manage containers on the NUC without SSH-ing manually.
 - All servers have been verified working (Jan 2026).
 
-## 10. Active Workflows
+## 10. Backend Services (NUC)
 
-1. **Google Drive Sorting**: Inbox handling & automated organization (`ai-sorter.timer` on NUC).
-2. **Plaud AI Integration**: Processing recordings via n8n & email.
-3. **Readwise Daily Digest**: Fetches unread articles, summarizes via Gemini, posts to Google Chat.
-4. **Cloudflared Setup**: _In Progress_ (Remote access for NUC).
+> These are automated tasks running on the NUC that handle important workflows. Check these when debugging automation failures.
+
+### n8n Workflows
+
+| Workflow                     | Trigger    | Description                                            | Account                |
+| ---------------------------- | ---------- | ------------------------------------------------------ | ---------------------- |
+| **Readwise Daily Digest v3** | Cron 7 AM  | Fetches unread articles → Gemini summary → Google Chat | `tariq@techs4good.org` |
+| **Plaud Gmail to Drive**     | Gmail poll | Intercepts Plaud recordings, saves to Drive            | `takhan@gmail.com`     |
+
+> **Note**: Google Chat webhooks require **Google Workspace** accounts (e.g., `techs4good.org`). Consumer Gmail doesn't support them.
+
+### systemd Timers
+
+| Timer             | Schedule | Script         | Description                     |
+| ----------------- | -------- | -------------- | ------------------------------- |
+| `ai-sorter.timer` | Daily    | `ai-sorter.py` | Google Drive inbox organization |
+
+**Management:**
+
+```bash
+# Check timer status
+systemctl --user list-timers
+
+# View logs
+journalctl --user -u ai-sorter.service
+```
