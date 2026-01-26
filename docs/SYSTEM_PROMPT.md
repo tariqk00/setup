@@ -103,20 +103,22 @@
 
 > These are automated tasks running on the NUC that handle important workflows. Check these when debugging automation failures.
 
-### n8n Workflows
+### n8n Workflows (Active)
 
-| Workflow                     | Trigger    | Description                                            | Account                |
-| ---------------------------- | ---------- | ------------------------------------------------------ | ---------------------- |
-| **Readwise Daily Digest v3** | Cron 7 AM  | Fetches unread articles → Gemini summary → Google Chat | `tariq@techs4good.org` |
-| **Plaud Gmail to Drive**     | Gmail poll | Intercepts Plaud recordings, saves to Drive            | `takhan@gmail.com`     |
+| ID                 | Workflow                     | Trigger    | Notes                                         |
+| ------------------ | ---------------------------- | ---------- | --------------------------------------------- |
+| `2kOEwBPdA1wuqakp` | **Readwise Daily Digest v3** | Cron 7 AM  | Posts to Google Chat (`tariq@techs4good.org`) |
+| `3XQNRaYmVsEgwnP4` | **Plaud Emails to Drive**    | Gmail poll | Saves Plaud recordings to Drive               |
+| `zooS9ZN9JCKUSpHq` | **Gemini Journal to Drive**  | ?          | Journal automation                            |
 
 > **Note**: Google Chat webhooks require **Google Workspace** accounts (e.g., `techs4good.org`). Consumer Gmail doesn't support them.
 
 ### systemd Timers
 
-| Timer             | Schedule | Script         | Description                     |
-| ----------------- | -------- | -------------- | ------------------------------- |
-| `ai-sorter.timer` | Daily    | `ai-sorter.py` | Google Drive inbox organization |
+| Timer                    | Schedule    | Service                    | Description                     |
+| ------------------------ | ----------- | -------------------------- | ------------------------------- |
+| `ai-sorter.timer`        | 3:00 AM UTC | `ai-sorter.service`        | Google Drive inbox organization |
+| `plaud-automation.timer` | 7:00 AM UTC | `plaud-automation.service` | Plaud recording processing      |
 
 **Management:**
 
@@ -126,4 +128,5 @@ systemctl --user list-timers
 
 # View logs
 journalctl --user -u ai-sorter.service
+journalctl --user -u plaud-automation.service
 ```
