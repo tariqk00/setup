@@ -10,54 +10,53 @@ This document tracks all automated workflows and scheduled tasks that help organ
 ```mermaid
 flowchart TB
     subgraph External["External Services"]
-        READWISE["📚 Readwise Reader"]
-        PLAUD["🎙️ Plaud.ai"]
-        GMAIL["📧 Gmail"]
-        GFORM["📝 Google Form"]
+        READWISE["Readwise Reader"]
+        PLAUD["Plaud.ai"]
+        GMAIL["Gmail"]
+        GFORM["Google Form"]
     end
 
-    subgraph NUC["NUC Server (172.30.0.169)"]
+    subgraph NUC["NUC Server 172.30.0.169"]
         subgraph n8n["n8n Workflows"]
-            RD["Readwise Daily Digest v3"]
+            RD["Readwise Daily Digest"]
             PE["Plaud Emails to Drive"]
             GJ["Gemini Journal to Drive"]
         end
 
         subgraph systemd["systemd Timers"]
-            AI["ai-sorter.timer"]
-            PA["plaud-automation.timer"]
+            AI["ai-sorter"]
+            PA["plaud-automation"]
         end
 
-        GEMINI["🤖 Gemini AI"]
+        GEMINI["Gemini AI"]
     end
 
     subgraph Storage["Google Drive"]
-        INBOX["📥 Inbox"]
-        PLAUD_FOLDER["🎙️ Plaud Recordings"]
-        JOURNAL_FOLDER["📓 Journal"]
-        SORTED["📂 Sorted Folders"]
+        INBOX["Inbox"]
+        PLAUD_FOLDER["Plaud Recordings"]
+        JOURNAL_FOLDER["Journal"]
+        SORTED["Sorted Folders"]
     end
 
     subgraph Notifications["Notifications"]
-        GCHAT["💬 Google Chat\n(Automations Space)"]
+        GCHAT["Google Chat"]
     end
 
-    %% Data flows
-    READWISE -->|"API: top 3 articles"| RD
-    RD -->|"summarize"| GEMINI
-    RD -->|"daily digest"| GCHAT
+    READWISE --> RD
+    RD --> GEMINI
+    RD --> GCHAT
 
-    PLAUD -->|"email with audio"| GMAIL
-    GMAIL -->|"trigger"| PE
-    PE -->|"upload"| PLAUD_FOLDER
+    PLAUD --> GMAIL
+    GMAIL --> PE
+    PE --> PLAUD_FOLDER
 
-    GFORM -->|"submission"| GJ
-    GJ -->|"save entry"| JOURNAL_FOLDER
+    GFORM --> GJ
+    GJ --> JOURNAL_FOLDER
 
-    AI -->|"organize files"| INBOX
-    INBOX -->|"sorted"| SORTED
+    AI --> INBOX
+    INBOX --> SORTED
 
-    PA -->|"sync recordings"| PLAUD_FOLDER
+    PA --> PLAUD_FOLDER
 ```
 
 ### Data Flow Summary
