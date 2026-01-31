@@ -196,7 +196,40 @@ _Optional GUI for managing Docker & Files._
 
 ---
 
-## 🔒 4. Secrets Management
+## 🚀 4. Deployment Strategy (CI/CD)
+
+We follow a strict "Commit-Deploy-Restart" lifecycle to prevent configuration drift between Dev (Chromebook) and Prod (NUC).
+
+### Deployment Script
+
+Use the `toolbox/scripts/deploy_to_nuc.sh` script on the Chromebook to automate the release process.
+
+```bash
+# From ~/github/tariqk00/toolbox
+./scripts/deploy_to_nuc.sh
+```
+
+**What this script does:**
+
+1.  **Safety Check**: Verifies there are no uncommitted changes locally.
+2.  **Commit**: Pushes `master` to GitHub.
+3.  **Deploy**: SSHs into the NUC (`172.30.0.169`) and runs `git pull`.
+4.  **Restart**: Reloads the `ai-sorter.service` to pick up code changes.
+5.  **Verify**: Prints the systemd service status.
+
+### Root Cause Analysis (RCA) Protocol
+
+If a deployment fails or behaves unexpectedly, use the **5 Whys** method:
+
+1.  **Check Service Status**: `systemctl --user status ai-sorter`
+2.  **Check Logs**: `journalctl --user -u ai-sorter -n 50`
+3.  **Verify Paths**: Ensure `ExecStart` in `.service` files matches `pwd`.
+4.  **Verify Secrets**: Check `toolbox/config/` for missing API keys.
+5.  **Re-deploy**: Run `deploy_to_nuc.sh` to ensure sync.
+
+---
+
+## 🔒 5. Secrets Management
 
 Both environments require a `.env` or `credentials.json` (depending on the tool).
 _Note: These are NOT in Git._
@@ -206,7 +239,7 @@ _Note: These are NOT in Git._
 
 ---
 
-## 🤖 5. MCP Server Configuration (Antigravity)
+## 🤖 6. MCP Server Configuration (Antigravity)
 
 > **Config Path**: `~/.gemini/antigravity/mcp_config.json`
 
@@ -248,7 +281,7 @@ _Note: These are NOT in Git._
 
 ---
 
-## 📋 6. n8n Workflows
+## 📋 7. n8n Workflows
 
 | Workflow              | Trigger       | Description                                          |
 | --------------------- | ------------- | ---------------------------------------------------- |
