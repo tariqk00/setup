@@ -20,7 +20,12 @@ This repository centralizes automation scripts and documentation for my developm
 
 ## Usage
 
-### 🛑 Build & Deployment (Start Here)
+### ⚡ Powerwash Recovery (Quick Start)
+
+Just did a powerwash or fresh install? Start here:
+👉 **[docs/BOOTSTRAP.md](docs/BOOTSTRAP.md)** — 5-minute manual setup, then agent takes over
+
+### 🛑 Build & Deployment (Full Guide)
 
 For full instructions on rebuilding the environments, setting up SSH keys, and deploying automation:
 👉 **[Read docs/ENV_SETUP.md](docs/ENV_SETUP.md)**
