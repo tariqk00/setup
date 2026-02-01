@@ -21,14 +21,36 @@ It covers the **Chromebook (Dev)** and **NUC (Prod)** environments, including au
 
 ---
 
+## ⚡ Quick Rebuild Checklist (Chromebook)
+
+> [!TIP]
+> Use this checklist for rapid recovery. Full details in sections below.
+
+1. **Enable Linux (Crostini)** — ChromeOS Settings → Developers → Linux
+2. **Install packages** — `sudo apt update && sudo apt install -y git python3 python3-venv gh docker.io`
+3. **Restore secrets from Drive** — Download `CHROMEBOOK_SECRETS_BACKUP.txt` from `PKM/Infrastructure`
+4. **Restore SSH key** — Copy to `~/.ssh/id_ed25519_antigravity`, run `chmod 600`
+5. **Restore SSH config** — Copy to `~/.ssh/config`
+6. **Clone repos** — `cd ~/github/tariqk00 && gh repo clone tariqk00/toolbox && gh repo clone tariqk00/setup`
+7. **Setup venv** — `cd toolbox/google-drive && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt`
+8. **Restore MCP config** — Copy to `~/.gemini/antigravity/mcp_config.json`
+9. **Restore Google creds** — Copy `credentials.json` to `toolbox/google-drive/`
+10. **Run fix scripts** — `./scripts/fix_shortcuts.sh && ./scripts/fix_sommelier.sh`
+11. **Install Chrome** — See Section 2.E
+
+---
+
 ## 💻 2. Chromebook Setup (Development)
 
 ### A. Prerequisites & Packages
 
 ```bash
 sudo apt update
-sudo apt install -y git python3 python3-venv gh
+sudo apt install -y git python3 python3-venv gh docker.io
 ```
+
+> [!NOTE]
+> `docker.io` is required for MCP servers (GitHub, n8n) which run in containers.
 
 ### B. GitHub Authentication (Critical)
 
@@ -75,6 +97,35 @@ cd ~/github/tariqk00/toolbox
 
 - **Config Path**: `~/.antigravity/`
 - **Data Path**: `~/.config/Antigravity/`
+- **MCP Config**: `~/.gemini/antigravity/mcp_config.json`
+
+**Restore MCP Config** (after Antigravity install):
+
+```bash
+mkdir -p ~/.gemini/antigravity
+# Copy mcp_config.json from backup file to ~/.gemini/antigravity/mcp_config.json
+```
+
+### E. Chrome Browser (Required for Browser Agent)
+
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install -y ./google-chrome-stable_current_amd64.deb
+rm google-chrome-stable_current_amd64.deb
+```
+
+**Binary path for Agent**: `/usr/bin/google-chrome`
+
+### F. Secrets Recovery
+
+Secrets are backed up to Google Drive: `PKM/Infrastructure/CHROMEBOOK_SECRETS_BACKUP.txt`
+
+| Secret       | Restore Location                            |
+| ------------ | ------------------------------------------- |
+| SSH Key      | `~/.ssh/id_ed25519_antigravity` (chmod 600) |
+| SSH Config   | `~/.ssh/config`                             |
+| MCP Config   | `~/.gemini/antigravity/mcp_config.json`     |
+| Google Creds | `toolbox/google-drive/credentials.json`     |
 
 ---
 
