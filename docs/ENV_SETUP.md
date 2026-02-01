@@ -119,7 +119,7 @@ rm google-chrome-stable_current_amd64.deb
 
 ### F. Secrets Recovery
 
-Secrets are backed up to Google Drive: `PKM/Infrastructure/CHROMEBOOK_SECRETS_BACKUP.txt`
+Secrets backup: [CHROMEBOOK_SECRETS_BACKUP.txt](https://drive.google.com/file/d/1Xs8J2NZQYnmWaDdNfxPlOX-tTTiOBbgb/view)
 
 | Secret       | Restore Location                            |
 | ------------ | ------------------------------------------- |
