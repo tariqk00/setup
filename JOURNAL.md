@@ -1,3 +1,4 @@
 - docs: Added MCP server configuration sections to ENV_SETUP.md and updated SYSTEM_PROMPT.md
 - docs: Completed MCP server verification and added documentation to SYSTEM_PROMPT.md and ENV_SETUP.md
 - 2026-02-01: Updated ENV_SETUP.md with Quick Rebuild Checklist, Docker prereq, Chrome install, and Secrets Recovery section
+- 2026-02-01: Added Antigravity IDE installation instructions (Section 2.G)

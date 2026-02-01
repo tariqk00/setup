@@ -33,10 +33,11 @@ It covers the **Chromebook (Dev)** and **NUC (Prod)** environments, including au
 5. **Restore SSH config** — Copy to `~/.ssh/config`
 6. **Clone repos** — `cd ~/github/tariqk00 && gh repo clone tariqk00/toolbox && gh repo clone tariqk00/setup`
 7. **Setup venv** — `cd toolbox/google-drive && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt`
-8. **Restore MCP config** — Copy to `~/.gemini/antigravity/mcp_config.json`
-9. **Restore Google creds** — Copy `credentials.json` to `toolbox/google-drive/`
-10. **Run fix scripts** — `./scripts/fix_shortcuts.sh && ./scripts/fix_sommelier.sh`
-11. **Install Chrome** — See Section 2.E
+8. **Install Antigravity** — See Section 2.G
+9. **Restore MCP config** — Copy to `~/.gemini/antigravity/mcp_config.json`
+10. **Restore Google creds** — Copy `credentials.json` to `toolbox/google-drive/`
+11. **Run fix scripts** — `./scripts/fix_shortcuts.sh && ./scripts/fix_sommelier.sh`
+12. **Install Chrome** — See Section 2.E
 
 ---
 
@@ -126,6 +127,27 @@ Secrets are backed up to Google Drive: `PKM/Infrastructure/CHROMEBOOK_SECRETS_BA
 | SSH Config   | `~/.ssh/config`                             |
 | MCP Config   | `~/.gemini/antigravity/mcp_config.json`     |
 | Google Creds | `toolbox/google-drive/credentials.json`     |
+
+### G. Antigravity IDE Installation
+
+1. **Download** from [antigravity.google](https://antigravity.google)
+   - Select the **Linux (.deb)** package
+
+2. **Install**:
+
+   ```bash
+   cd ~/Downloads
+   sudo apt install -y ./antigravity_*.deb
+   ```
+
+3. **Launch**: Search "Antigravity" in the ChromeOS launcher or run `antigravity` in terminal
+
+4. **First Run**:
+   - Sign in with Google account
+   - Open folder: `~/github/tariqk00`
+
+> [!IMPORTANT]
+> After install, restore MCP config to `~/.gemini/antigravity/mcp_config.json` and run `fix_shortcuts.sh`.
 
 ---
 
