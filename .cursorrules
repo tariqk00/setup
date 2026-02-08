@@ -1,0 +1,23 @@
+# Workspace Rules: Setup & Infrastructure (NUC & Chromebook)
+
+## Context
+This repository is the definitive "Source of Truth" for infrastructure configuration, deployment scripts, and system documentation.
+
+## Guidelines
+
+### 1. Safety First
+- **Chromebook (Dev)**: NEVER enable `systemd` timers or cron jobs here. This is for coding and dry-runs only.
+- **NUC (Prod)**: This is strictly for *running* automation, not editing code.
+
+### 2. Deployment Protocol
+- **Do Not Edit on NUC**: Avoid changing files directly on the server. Configuration drift is the enemy.
+- **Deploy via Script**: ALWAYS use `scripts/deploy_to_nuc.sh` from the Chromebook to push changes.
+  - This ensures: `Commit (Dev)` -> `Push (GitHub)` -> `Pull (Prod)` -> `Restart Services`.
+
+### 3. Documentation Authority
+- `docs/ENV_SETUP.md` is the **Single Source of Truth** for architecture.
+- If you change a system configuration, YOU MUST update `ENV_SETUP.md`.
+
+### 4. Secrets Management
+- Zero-trust policy: Never commit `credentials.json`, `.env`, or `token.json`.
+- Use `CHROMEBOOK_SECRETS_BACKUP.txt` reference for recovery procedures.
