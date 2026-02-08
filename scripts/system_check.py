@@ -4,6 +4,11 @@ import sys
 import shutil
 from pathlib import Path
 
+"""
+Diagnostic script to verify health of NUC (remote) and Chromebook (local) environments.
+Checks SSH, Docker containers, Systemd timers, and git repo status.
+"""
+
 # ANSI Colors
 GREEN = '\033[92m'
 RED = '\033[91m'
