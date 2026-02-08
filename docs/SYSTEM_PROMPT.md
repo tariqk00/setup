@@ -20,6 +20,7 @@
 - **Standards:**
   - Document all code via clean, self-describing variable names and minimal comments.
   - Follow strict DRY (Don't Repeat Yourself) principles.
+  - **Script Reuse:** Before creating a new script, check `toolbox/scriptReferences.md` to see if functionality already exists.
 
 ## 3. Workflow & Memory
 
