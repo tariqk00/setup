@@ -97,15 +97,27 @@ cd ~/github/tariqk00/toolbox
 
 ### D. IDE Configuration (Antigravity)
 
-> [!IMPORTANT]
-> See `docs/gemini.md` for critical path differences in this environment.
-
-- **Config Path**: `~/.antigravity/`
-- **Data Path**: `~/.config/Antigravity/`
-- **MCP Config**: `~/.gemini/antigravity/mcp_config.json`
-
+### D. IDE Configuration (Antigravity)
+ 
+The IDE is a specialized build (Project IDX / VS Code Fork) which affects file paths and process names.
+ 
+#### 1. Path Mappings
+ 
+| Standard VS Code Path | **Antigravity Path**               |
+| :-------------------- | :--------------------------------- |
+| `~/.vscode/argv.json` | **`~/.antigravity/argv.json`**     |
+| `~/.config/Code`      | **`~/.config/Antigravity`**        |
+| Binary: `code`        | Binary: `antigravity` (wraps code) |
+ 
+#### 2. Known Issues & Fixes
+ 
+| Issue | Cause | Fix | Script |
+| :--- | :--- | :--- | :--- |
+| **Webview Error** | GPU Passthrough desync | Disable Hardware Acceleration in `argv.json` | `toolbox/scripts/fix_webview.sh` |
+| **Shortcut Conflicts** | ChromeOS System Keys | Force `keyCode` dispatch in `settings.json` | `toolbox/scripts/fix_shortcuts.sh` |
+ 
 **Restore MCP Config** (after Antigravity install):
-
+ 
 ```bash
 mkdir -p ~/.gemini/antigravity
 # Copy mcp_config.json from backup file to ~/.gemini/antigravity/mcp_config.json
