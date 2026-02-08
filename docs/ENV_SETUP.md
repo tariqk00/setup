@@ -222,11 +222,14 @@ pip install -r requirements.txt
     mkdir -p ~/.config/systemd/user
     cp ai-sorter.service ~/.config/systemd/user/
     cp ai-sorter.timer ~/.config/systemd/user/
+    cp plaud-automation.service ~/.config/systemd/user/
+    cp plaud-automation.timer ~/.config/systemd/user/
     systemctl --user daemon-reload
     ```
 3.  **Activate**:
     ```bash
     systemctl --user enable --now ai-sorter.timer
+    systemctl --user enable --now plaud-automation.timer
     ```
 
 ### G. Automation (n8n)
