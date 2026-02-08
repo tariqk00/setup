@@ -392,3 +392,42 @@ When deploying workflows or configs to the NUC:
 1. **MCP Server** – Use `n8n_create_workflow` or `docker-nuc` tools directly.
 2. **SSH + GitHub** – Push from Chromebook, `git pull` on NUC, then API call.
 3. **Manual UI** – Last resort; use n8n's Import function.
+
+---
+
+## 🧠 8. Agent Configuration (Workspace Rules)
+
+To ensure the AI Agent understands the multi-repo structure of this environment, we use a tiered context strategy.
+
+### A. Global Rules (The Constitution)
+- **File**: `setup/docs/SYSTEM_PROMPT.md`
+- **Scope**: Universal. Defines Persona, Architectural Standards, and "Who I Am".
+- **Usage**: Pasted into the "Global Rules" section of the Agent UI.
+
+### B. Workspace Rules (The Map)
+Since `~/repos/personal` contains multiple projects, we instruct the Agent on how to navigate them.
+
+#### 1. Repository-Level Context (`.cursorrules`)
+Each repo has specific instructions located at its root:
+- **`setup/.cursorrules`**: Safety protocols (No Dev Timers), Deployment logic.
+- **`toolbox/.cursorrules`**: Coding standards (venv paths), Script Reuse policies.
+
+#### 2. Agent UI Map
+When working from the Home Directory (`~`), configure the Agent's **Workspace Rule** with the following map:
+
+```markdown
+# Workspace Context: Home Directory
+
+## Project Structure
+- **Infrastructure (`~/repos/personal/setup`)**: 
+  - Contains: OS config, NUC automation services, Install docs (`ENV_SETUP.md`).
+  - Constraint: NEVER run `systemd` timers here on Chromebook.
+- **Toolbox (`~/repos/personal/toolbox`)**: 
+  - Contains: Python scripts (`bin/`, `lib/`), n8n workflows.
+  - Constraint: Always use `toolbox/google-drive/venv` for Python.
+
+## Navigation Rules
+1. **Infrastructure Changes**: Go to `setup`. Deployment via `scripts/deploy_to_nuc.sh`.
+2. **Logic/Scripting**: Go to `toolbox`. Check `scriptReferences.md` before coding.
+3. **Secrets**: Look for references in `setup/docs/CHROMEBOOK_REBUIL.md` but never try to read actual secrets from git.
+```
