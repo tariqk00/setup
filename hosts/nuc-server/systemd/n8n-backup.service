@@ -1,0 +1,13 @@
+[Unit]
+Description=Backup n8n Workflows to Git
+After=network.target docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/tariqk/github/tariqk00/setup/scripts/backup_n8n_workflows.sh
+WorkingDirectory=/home/tariqk/github/tariqk00/setup
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
