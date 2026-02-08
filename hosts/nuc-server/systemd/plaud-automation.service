@@ -3,7 +3,7 @@ Description=Run Plaud.ai to Google Drive Automation
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/python3 %h/github/tariqk00/plaud/plaud_automation.py
+ExecStart=%h/github/tariqk00/plaud/bin/run_automation.sh
 WorkingDirectory=%h/github/tariqk00/plaud
 
 [Install]
