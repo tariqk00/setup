@@ -219,7 +219,7 @@ class SystemChecker:
         critical_workflows = [
             "Readwise Daily Digest v3",
             "Gemini Journal to Drive",
-            "Plaud Gmail to Drive"
+            "Plaud Emails to Drive"
         ]
 
         # Get all workflows to find active status and IDs
