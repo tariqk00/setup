@@ -24,9 +24,13 @@ It covers the **Chromebook (Dev)** and **NUC (Prod)** environments, including au
 ## ⚡ Quick Rebuild Checklist (Chromebook)
 
 > [!TIP]
-> Use this checklist for rapid recovery. Full details in sections below.
+### A. Chromebook (Development)
+**Detailed Rebuild Guide:** [CHROMEBOOK_REBUILD.md](./CHROMEBOOK_REBUILD.md)
 
-1. **Enable Linux (Crostini)** — ChromeOS Settings → Developers → Linux
+1.  **Enable Linux (Crostini)**:
+    - Settings -> Developers -> Linux -> Turn On
+    - allocate at least 20GB space
+
 2. **Install packages** — `sudo apt update && sudo apt install -y git python3 python3-venv gh docker.io`
 3. **Restore secrets from Drive** — Download `CHROMEBOOK_SECRETS_BACKUP.txt` from `PKM/Infrastructure`
 4. **Restore SSH key** — Copy to `~/.ssh/id_ed25519_antigravity`, run `chmod 600`
