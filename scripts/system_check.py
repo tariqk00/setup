@@ -86,6 +86,65 @@ class SystemChecker:
         else:
             print_status("Python Venv missing", "WARN", venv_path)
 
+        # New: MCP Server Health
+        self.check_mcp_servers()
+
+    def check_mcp_servers(self):
+        if not self.mcp_config.exists():
+            return
+
+        print(f"\n{YELLOW}=== MCP Server Health ==={RESET}")
+        try:
+            with open(self.mcp_config, 'r') as f:
+                config = json.load(f)
+                servers = config.get("mcpServers", {})
+
+            for name, cfg in servers.items():
+                cmd = cfg.get("command")
+                args = cfg.get("args", [])
+
+                if cmd == "docker":
+                    # Check if daemon is accessible
+                    ok, _ = self.run_command("docker ps", shell=True)
+                    if not ok:
+                        print_status(f"MCP: {name}", "FAIL", "Docker permission denied (run sudo chmod 666 /var/run/docker.sock)")
+                        continue
+                    
+                    # Assume last arg is the image
+                    image = args[-1] if args else "unknown"
+                    ok, _ = self.run_command(f"docker image inspect {image}", shell=True)
+                    if ok:
+                        print_status(f"MCP: {name}", "PASS", f"Image: {image}")
+                    else:
+                        print_status(f"MCP: {name}", "FAIL", f"Image missing: {image}")
+
+                elif cmd == "ssh":
+                    host = args[0] if args else "unknown"
+                    path = args[1] if len(args) > 1 else "unknown"
+                    ok, _ = self.run_ssh_command(host, f"[[ -f {path} ]] && echo ok")
+                    if ok:
+                        print_status(f"MCP: {name}", "PASS", f"Remote binary exists on {host}")
+                    else:
+                        print_status(f"MCP: {name}", "FAIL", f"Remote binary missing on {host}")
+
+                elif "python" in str(cmd):
+                    # Check interpreter
+                    if not Path(cmd).exists():
+                        print_status(f"MCP: {name}", "FAIL", f"Interpreter missing: {cmd}")
+                        continue
+                    
+                    # Check script (extract from args)
+                    script = args[0] if args else "unknown"
+                    if Path(script).exists():
+                        print_status(f"MCP: {name}", "PASS", f"Script exists: {Path(script).name}")
+                    else:
+                        print_status(f"MCP: {name}", "FAIL", f"Script missing: {script}")
+                else:
+                    print_status(f"MCP: {name}", "WARN", f"Unknown command type: {cmd}")
+
+        except Exception as e:
+            print_status("MCP Health", "FAIL", str(e))
+
     def check_remote(self):
         print(f"\n{YELLOW}=== NUC (Remote) Checks ==={RESET}")
         host = "nuc"
