@@ -4,3 +4,4 @@
 - 2026-02-01: Added Antigravity IDE installation instructions (Section 2.G)
 - 2026-02-01: Updated secrets recovery section with actual Drive link
 - 2026-02-01: Added BOOTSTRAP.md and chromebook-rebuild workflow for streamlined powerwash recovery
+- 2026-02-12: NUC audit: exported consolidated Plaud n8n workflow, cleaned up 26 dead variants, fixed trust proxy
