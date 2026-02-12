@@ -1,0 +1,142 @@
+{
+  "name": "Plaud Emails to Drive (Final)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [{"mode": "everyHour"}]
+        },
+        "simple": true,
+        "filters": {
+          "sender": "no-reply@plaud.ai",
+          "subject": "[PLAUD-AutoFlow]"
+        },
+        "downloadAttachments": true
+      },
+      "id": "trigger-gmail",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [260, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AVbl1VG4EuUYSNnR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\n\nfor (const item of items) {\n  const json = item.json;\n  \n  // Content extraction with fallback\n  let content = json.textAsHtml || json.text || json.snippet || 'NO_CONTENT_FOUND';\n  if (!json.textAsHtml && !json.text) {\n    content = '<html><body><h3>Auto-Generated Snippet</h3><p>' + content + '</p></body></html>';\n  }\n\n  // Normalize date for filename (YYYY-MM-DD-HH-MM)\n  const rawDate = json.date || json.Date || json.internalDate || new Date();\n  const d = new Date(rawDate);\n  const pad = (n) => String(n).padStart(2, '0');\n  const dateStr = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '-' + pad(d.getHours()) + '-' + pad(d.getMinutes());\n\n  // Clean subject for filename\n  const rawSubject = json.subject || json.Subject || 'No Subject';\n  const cleanSubject = rawSubject.replace(/[^a-zA-Z0-9 ]/g, '').trim();\n\n  // Prepare email body as binary for Drive upload\n  const binaryBuffer = Buffer.from(content);\n  const binaryObject = await this.helpers.prepareBinaryData(\n    binaryBuffer, \n    dateStr + ' ' + cleanSubject + '-Email.html', \n    'text/html'\n  );\n  \n  const newBinary = item.binary ? { ...item.binary } : {};\n  newBinary['data'] = binaryObject;\n\n  results.push({\n    json: {\n      ...json,\n      normalized_date: dateStr,\n      normalized_subject: cleanSubject,\n      content_source: json.textAsHtml ? 'html' : (json.text ? 'text' : 'snippet')\n    },\n    binary: newBinary\n  });\n}\n\nreturn results;\n"
+      },
+      "id": "normalize-data",
+      "name": "Normalize & Format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "fileSelector": "binary",
+        "binaryPropertyName": "data",
+        "parentId": {
+          "__rl": true,
+          "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+          "mode": "id"
+        },
+        "name": "={{ $json.normalized_date }} {{ $json.normalized_subject }}-Email.html",
+        "options": {}
+      },
+      "id": "save-email-html",
+      "name": "Save Email HTML",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [740, 200],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "G8O3ahUTehXWQ76O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\nif (items[0].binary) {\n    for (const key of Object.keys(items[0].binary)) {\n        if (key === 'data') continue;\n        \n        results.push({\n            json: items[0].json,\n            binary: {\n                data: items[0].binary[key]\n            }\n        });\n    }\n}\nreturn results;\n"
+      },
+      "id": "split-attachments",
+      "name": "Split Attachments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [740, 500]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "fileSelector": "binary",
+        "binaryPropertyName": "data",
+        "parentId": {
+          "__rl": true,
+          "value": "16N14A_m847eSortz8hxbfhrk0YyvtouD",
+          "mode": "id"
+        },
+        "name": "={{ $json.normalized_date }} {{ $json.normalized_subject }}-{{ $binary.data.fileName }}",
+        "options": {}
+      },
+      "id": "save-attachments",
+      "name": "Save Attachments",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [980, 500],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "G8O3ahUTehXWQ76O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "removeLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": ["INBOX"]
+      },
+      "id": "archive-email",
+      "name": "Archive Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1220, 350],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AVbl1VG4EuUYSNnR",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [[{"node": "Normalize & Format", "type": "main", "index": 0}]]
+    },
+    "Normalize & Format": {
+      "main": [
+        [
+          {"node": "Save Email HTML", "type": "main", "index": 0},
+          {"node": "Split Attachments", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Save Email HTML": {
+      "main": [[{"node": "Archive Email", "type": "main", "index": 0}]]
+    },
+    "Split Attachments": {
+      "main": [[{"node": "Save Attachments", "type": "main", "index": 0}]]
+    },
+    "Save Attachments": {
+      "main": [[{"node": "Archive Email", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
