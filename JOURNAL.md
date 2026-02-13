@@ -5,3 +5,4 @@
 - 2026-02-01: Updated secrets recovery section with actual Drive link
 - 2026-02-01: Added BOOTSTRAP.md and chromebook-rebuild workflow for streamlined powerwash recovery
 - 2026-02-12: NUC audit: exported consolidated Plaud n8n workflow, cleaned up 26 dead variants, fixed trust proxy
+- 2026-02-13: Phase 5: Consolidated Plaud End-to-End workflow into n8n. Added Gemini-powered analysis and intelligent routing (Transcripts to PKM/Transcripts, others to PKM/Plaud).
