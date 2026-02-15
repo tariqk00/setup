@@ -5,8 +5,8 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/home/tariqk/repos/personal/toolbox/trainheroic/venv/bin/python /home/tariqk/repos/personal/toolbox/trainheroic/extract.py
-WorkingDirectory=/home/tariqk/repos/personal/toolbox
+ExecStart=/home/tariqk/github/tariqk00/toolbox/trainheroic/venv/bin/python /home/tariqk/github/tariqk00/toolbox/trainheroic/extract.py
+WorkingDirectory=/home/tariqk/github/tariqk00/toolbox
 StandardOutput=journal
 StandardError=journal
 

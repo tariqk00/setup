@@ -10,10 +10,10 @@ echo "=== Deploying Fitness Services to NUC ==="
 
 # Link service files
 echo "Linking service files..."
-ln -sf "$HOME/repos/personal/setup/services/garmin-sync.service" "$SERVICE_DIR/"
-ln -sf "$HOME/repos/personal/setup/services/garmin-sync.timer" "$SERVICE_DIR/"
-ln -sf "$HOME/repos/personal/setup/services/trainheroic-extract.service" "$SERVICE_DIR/"
-ln -sf "$HOME/repos/personal/setup/services/trainheroic-extract.timer" "$SERVICE_DIR/"
+ln -sf "$HOME/github/tariqk00/setup/services/garmin-sync.service" "$SERVICE_DIR/"
+ln -sf "$HOME/github/tariqk00/setup/services/garmin-sync.timer" "$SERVICE_DIR/"
+ln -sf "$HOME/github/tariqk00/setup/services/trainheroic-extract.service" "$SERVICE_DIR/"
+ln -sf "$HOME/github/tariqk00/setup/services/trainheroic-extract.timer" "$SERVICE_DIR/"
 
 # Reload daemon
 echo "Reloading systemd daemon..."

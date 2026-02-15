@@ -5,8 +5,8 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/home/tariqk/repos/personal/toolbox/garmin/venv/bin/python /home/tariqk/repos/personal/toolbox/garmin/sync.py
-WorkingDirectory=/home/tariqk/repos/personal/toolbox
+ExecStart=/home/tariqk/github/tariqk00/toolbox/garmin/venv/bin/python /home/tariqk/github/tariqk00/toolbox/garmin/sync.py
+WorkingDirectory=/home/tariqk/github/tariqk00/toolbox
 StandardOutput=journal
 StandardError=journal
 # Environment variables loaded from user session or explicitly set if needed
