@@ -248,6 +248,46 @@ pip install -r requirements.txt
     systemctl --user enable --now plaud-automation.timer
     ```
 
+### H. Fitness Automation (Garmin & TrainHeroic)
+
+1.  **Install System Dependencies**:
+    ```bash
+    # (Already installed in step E, but ensure python3-venv is present)
+    sudo apt install -y python3-venv
+    ```
+2.  **Deploy Code**:
+    ```bash
+    cd ~/github/tariqk00
+    # Pull latest changes
+    cd setup && git pull
+    cd ../toolbox && git pull
+    ```
+3.  **Setup Virtual Envs**:
+    ```bash
+    # Garmin
+    cd ~/github/tariqk00/toolbox/garmin
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    deactivate
+    
+    # TrainHeroic
+    cd ../trainheroic
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    deactivate
+    ```
+4.  **Install Services**:
+    ```bash
+    # Use the deployment script
+    ~/github/tariqk00/setup/scripts/deploy_fitness.sh
+    ```
+5.  **Secrets**:
+    - Ensure `GEMINI_API_KEY` is exported in `~/.bashrc` or systemd environment.
+    - Ensure `GARMIN_PASSWORD` is exported in `~/.bashrc` or systemd environment.
+    - Copy `credentials.json` (Google Drive) to `toolbox/garmin/` and `toolbox/trainheroic/`.
+
 ### G. Automation (n8n)
 
 > [!TIP]
