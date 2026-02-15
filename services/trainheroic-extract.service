@@ -1,0 +1,14 @@
+[Unit]
+Description=TrainHeroic Extraction from Screenshots
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/tariqk/repos/personal/toolbox/trainheroic/venv/bin/python /home/tariqk/repos/personal/toolbox/trainheroic/extract.py
+WorkingDirectory=/home/tariqk/repos/personal/toolbox
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

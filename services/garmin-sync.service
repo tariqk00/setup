@@ -1,0 +1,16 @@
+[Unit]
+Description=Garmin Activity Sync to Google Drive
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/tariqk/repos/personal/toolbox/garmin/venv/bin/python /home/tariqk/repos/personal/toolbox/garmin/sync.py
+WorkingDirectory=/home/tariqk/repos/personal/toolbox
+StandardOutput=journal
+StandardError=journal
+# Environment variables loaded from user session or explicitly set if needed
+# Environment="GARMIN_PASSWORD=..." (Best to use keyring or config file if possible, or reliance on env vars in .bashrc if running as user service)
+
+[Install]
+WantedBy=default.target
